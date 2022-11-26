@@ -1,0 +1,116 @@
+{% extends 'layout.html' %}
+
+{% block style %}
+  <style>
+    img {
+      animation: Alpha 1s;
+    }
+
+    @keyframes Alpha {
+      0% {
+        opacity: 0;    
+        transform: scale(.9);    
+      }
+
+      100% {
+        opacity: 1;  
+        transform: scale(1);          
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <button type="button" class="btn btn-outline-dark" onclick="history.back()">Back</button>
+  <div class="row">
+    <div class="col-xs-8 col-md-8 col-lg-8 d-block mx-auto">      
+      <div class="place-details-image my-3">
+        <img src="{{place.imageUrl}}" class="img-fluid rounded" alt="...">
+      </div>
+    </div>
+    <div class="col-xs-8 col-md-8 col-lg-8 d-block mx-auto">
+      <div class="place-details-header">
+        <h3>{{place.title}}</h3>
+      </div>
+      <div class="place-details-description">
+        <p>{{place.description}}</p>
+      </div>
+    </div>
+    <div class="col-xs-8 col-md-8 col-lg-8 d-block mx-auto">
+      <span class="text-danger">
+        {% for m in messages %}
+          {{m}}
+        {% endfor %}
+      </span>      
+      <form method="post">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+          <input type="hidden" class="form-control" placeholder="username" name="username" id="inputDefault" value="{{user.id}}">
+          <input type="text" class="form-control" placeholder="comment..." name="comment" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+          {% if user.is_authenticated %}
+            <button class="btn btn-outline-dark text-uppercase" type="submit" id="button-addon2">Post</button>
+          {% else %}
+            <a href="{% url 'user_login' %}">
+              <button class="btn btn-outline-dark text-uppercase" type="button" id="button-addon2">Post</button>
+            </a>
+          {% endif %}
+        </div>      
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="stars" id="inlineRadio1" value="1">
+          <label class="form-check-label" for="inlineRadio1">1</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="stars" id="inlineRadio2" value="2">
+          <label class="form-check-label" for="inlineRadio2">2</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="stars" id="inlineRadio3" value="3">
+          <label class="form-check-label" for="inlineRadio3">3</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="stars" id="inlineRadio3" value="4">
+          <label class="form-check-label" for="inlineRadio3">4</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="stars" id="inlineRadio3" value="5" checked>
+          <label class="form-check-label" for="inlineRadio3">5</label>
+        </div>
+      </form>
+      {% if review %}
+        <button type="button" id="toggle" class="btn btn-dark btn-sm" style="width: 100%;">comments</button>      
+      {% endif %}
+      <ol id="myShow" class="list-group">
+        {% if review %}
+          {% for r in review %}            
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div class="ms-2 me-auto">
+                <div class="fw-bold">{{r.user.username}}</div>
+                {% if r.comment %}
+                  {{r.comment}}
+                  <br />
+                {% endif %}
+                <span class="text-secondary">{{r.created}}</span>              
+              </div>
+              <i class="bi bi-star-fill badge bg-dark rounded-pill">{{r.stars}}</i>
+              <!-- <span class="badge bg-primary rounded-pill">14</span> -->
+            </li>        
+          {% endfor %}
+        {% endif %}
+      </ol>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    const targetDiv = document.getElementById("myShow");
+    const btn = document.getElementById("toggle");
+    btn.onclick = function () {
+      if (targetDiv.style.display !== "none") {
+        targetDiv.style.display = "none";
+      } else {
+        targetDiv.style.display = "block";
+      }
+    };
+  </script>
+{% endblock %}

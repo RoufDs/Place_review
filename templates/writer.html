@@ -1,0 +1,194 @@
+{% extends 'layout.html' %}
+
+{% block style %}
+  <style>
+    .writer-header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .card {
+      animation: FadeUp 1s;
+    }
+
+    @keyframes FadeUp {
+      0% {
+        opacity: 0;
+        transform: scale(.9);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .writer-create {
+      font-size: 2rem;
+    }
+
+    .writer-create:hover {
+      color: #A9A9A9;
+      transform: translateY(-3px);   
+      cursor: pointer;   
+    }
+
+    .writer-create:active {
+      transform: translateY(-1px);
+    }
+
+    .writer-form-create {
+      display: none;
+      background-color: rgb(238, 233, 213);
+      position: absolute;
+      z-index: 2;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      padding: 2rem;
+      border-radius: 4px;
+    }
+
+    .writer-form-btn-create {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    img {
+      height: 100%;
+    }
+
+    .writer-delete {
+      font-size: 2rem;
+      color: red;
+      opacity: .5;
+    }
+
+    .writer-dropdown {
+      position: absolute;
+      z-index: 1;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .writer-form-delete {
+      visibility: hidden;
+      background-color: rgb(238, 233, 213);
+      position: absolute;
+      z-index: 1;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      padding: 1rem;
+      border-radius: 4px;
+      transition: all 0s;
+    }
+    
+    .writer-dropdown:hover .writer-form-delete {
+      visibility: visible;
+      transition-delay: .2s;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="writer-header">
+    <!-- <h1>{{user.username}}</h1> -->
+    <i id="toggle" class="bi bi-plus-square-dotted writer-create"></i>
+  </div>
+  <form method="post" id="myShow" class="writer-form-create">
+    {% csrf_token %}    
+    <input type="hidden" class="form-control" id="exampleFormControlInput1" name="user" value="{{user.id}}" readonly>
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Title</label>
+      <input type="text" class="form-control" id="exampleFormControlInput1" name="title" required>
+    </div>
+    <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+      <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="description" required></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">ImageUrl</label>
+      <input type="url" class="form-control" id="exampleFormControlInput1" name="imageUrl" required>
+    </div>
+    <div class="writer-form-btn-create">
+      <button type="reset" class="btn btn-outline-danger text-uppercase me-2">Reset</button>
+      <button type="submit" class="btn btn-outline-success text-uppercase">Create</button>
+    </div>
+  </form>
+  <h1>Finished</h1>
+  <div class="row">
+    {% for p in place %}
+      {% if p.active %}
+        <div class="col-xs-8 col-md-4 col-lg-3">  
+          <div class="card mb-3">
+            <div style="height: 2rem; overflow:hidden;" class="home-card-header box">
+              <h6 class="card-header">{{p.title}}</h6>
+            </div>
+            <div class="writer-dropdown">
+              <i class="bi bi-x-circle-fill writer-delete"></i>
+              <form method="post" class="writer-form-delete">
+                {% csrf_token %}
+                <input type="hidden" class="form-control" id="exampleFormControlInput1" name="user" value="{{user.id}}" readonly>
+                <input type="hidden" class="form-control" id="exampleFormControlInput1" name="place_d" value="{{p.id}}" readonly>
+                <button type="button" class="btn btn-danger text-uppercase">Delete</button>                
+              </form>            
+            </div>
+            <div style="height: 175px; overflow:hidden;" class="home-card-image-box">
+              <img src="{{p.imageUrl}}" class="card-img-top" alt="{{p.title}}">
+            </div>    
+            <div class="card-footer text-muted">
+              {{p.updated}}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <h1>Pending</h1>
+  <div class="row">
+    {% for p in place %}
+      {% if not p.active %}
+        <div class="col-xs-8 col-md-4 col-lg-3">  
+          <div class="card mb-3">
+            <div style="height: 2rem; overflow:hidden;" class="home-card-header box">
+              <h6 class="card-header">{{p.title}}</h6>
+            </div>
+            <div class="writer-dropdown">
+              <i class="bi bi-x-circle-fill writer-delete"></i>
+              <form method="post" class="writer-form-delete">
+                {% csrf_token %}
+                <input type="hidden" class="form-control" id="exampleFormControlInput1" name="user" value="{{user.id}}" readonly>
+                <input type="hidden" class="form-control" id="exampleFormControlInput1" name="place_d" value="{{p.id}}" readonly>
+                <button type="button" class="btn btn-danger text-uppercase">Delete</button>                 
+              </form>            
+            </div>            
+            <div style="height: 175px; overflow:hidden;" class="home-card-image-box">
+              <img src="{{p.imageUrl}}" class="card-img-top" alt="{{p.title}}">
+            </div>    
+            <div class="card-footer text-muted">
+              {{p.updated}}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    const targetDiv = document.getElementById("myShow");
+    const btn = document.getElementById("toggle");
+    btn.onclick = function () {
+      if (targetDiv.style.display !== "none") {
+        targetDiv.style.display = "none";
+      } else {
+        targetDiv.style.display = "block";
+      }
+    };
+  </script>
+{% endblock %}

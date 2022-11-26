@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+
+{% block style %}
+  <style>
+    .card {
+      animation: FadeUp 2s;
+    }
+
+    img {
+      transition: all 5s;
+      height: 100%;
+    }
+
+    img:hover {
+      transform: scale(1.5);
+    }
+
+    @keyframes FadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(2rem);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translate(0);
+      }
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    {% for p in place %}
+      <div class="col col-xs-8 col-md-4 col-lg-3">  
+        <div class="card mb-3">
+          <div style="height: 2rem; overflow:hidden;" class="home-card-header box">
+            <h6 class="card-header">{{p.title}}</h6>
+          </div>         
+          <a href="{% url 'place_details' p.id %}">
+            <div style="height: 175px; overflow:hidden;" class="home-card-image-box">
+              <img src="{{p.imageUrl}}" class="card-img-top" alt="{{p.title}}">
+            </div>    
+          </a>
+          <div class="card-body">
+            <span>
+              {% if p.avg_ratings >= 1 %}
+                <i class="bi bi-star-fill"></i>
+              {% elif p.avg_ratings >= 0.5 %}
+                <i class="bi bi-star-half"></i>
+              {% else %}
+                <i class="bi bi-star"></i>
+              {% endif %}
+              {% if p.avg_ratings >= 2 %}
+                <i class="bi bi-star-fill"></i>
+              {% elif p.avg_ratings >= 1.5 %}
+                <i class="bi bi-star-half"></i>
+              {% else %}
+                <i class="bi bi-star"></i>
+              {% endif %}
+              {% if p.avg_ratings >= 3 %}
+                <i class="bi bi-star-fill"></i>
+              {% elif p.avg_ratings >= 2.5 %}
+                <i class="bi bi-star-half"></i>
+              {% else %}
+                <i class="bi bi-star"></i>
+              {% endif %}
+              {% if p.avg_ratings >= 4 %}
+                <i class="bi bi-star-fill"></i>
+              {% elif p.avg_ratings >= 3.5 %}
+                <i class="bi bi-star-half"></i>
+              {% else %}
+                <i class="bi bi-star"></i>
+              {% endif %}
+              {% if p.avg_ratings >= 5 %}
+                <i class="bi bi-star-fill"></i>
+              {% elif p.avg_ratings >= 4.5 %}
+                <i class="bi bi-star-half"></i>
+              {% else %}
+                <i class="bi bi-star"></i>
+              {% endif %}
+            </span>      
+            <span>{{p.no_of_ratings}} reviews</span>
+          </div>
+          <div class="card-footer text-muted">
+            <span>{{p.created.day}}/{{p.created.month}}/{{p.created.year}}</span>            
+            <span>{{p.get_date}}</span>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
