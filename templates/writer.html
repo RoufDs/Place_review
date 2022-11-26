@@ -24,7 +24,7 @@
       }
     }
 
-    .writer-create {
+    i {
       font-size: 2rem;
     }
 
@@ -91,12 +91,29 @@
       visibility: visible;
       transition-delay: .2s;
     }
+
+    .writer-form-btn-delete {
+      display: flex;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .arrow-up-down {
+      display: flex;
+      align-items: center;
+    }
+
+    .arrow-up-down a {
+      color: #A9A9A9;
+    }
   </style>
 {% endblock %}
 
 {% block content %}
-  <div class="writer-header">
-    <!-- <h1>{{user.username}}</h1> -->
+  <div class="writer-header">    
     <i id="toggle" class="bi bi-plus-square-dotted writer-create"></i>
   </div>
   <form method="post" id="myShow" class="writer-form-create">
@@ -119,7 +136,10 @@
       <button type="submit" class="btn btn-outline-success text-uppercase">Create</button>
     </div>
   </form>
-  <h1>Finished</h1>
+  <div class="arrow-up-down">
+    <h1 id="finished" class="me-3">Finished</h1>
+    <a href="#pending"><i class="bi bi-arrow-down-square"></i></a>
+  </div>
   <div class="row">
     {% for p in place %}
       {% if p.active %}
@@ -134,21 +154,30 @@
                 {% csrf_token %}
                 <input type="hidden" class="form-control" id="exampleFormControlInput1" name="user" value="{{user.id}}" readonly>
                 <input type="hidden" class="form-control" id="exampleFormControlInput1" name="place_d" value="{{p.id}}" readonly>
-                <button type="button" class="btn btn-danger text-uppercase">Delete</button>                
+                <div class="writer-form-btn-delete">       
+                  <a href="{% url 'place_edit' p.id %}">
+                    <button type="button" class="btn btn-warning me-2">Edit</button>
+                  </a>
+                  <button type="submit" class="btn btn-danger text-uppercase">Delete</button>                
+                </div>
               </form>            
             </div>
             <div style="height: 175px; overflow:hidden;" class="home-card-image-box">
               <img src="{{p.imageUrl}}" class="card-img-top" alt="{{p.title}}">
             </div>    
             <div class="card-footer text-muted">
-              {{p.updated}}
+              <span>{{p.created.day}}/{{p.created.month}}/{{p.created.year}}</span>            
+              <span>{{p.get_date}}</span>
             </div>
           </div>
         </div>
       {% endif %}
     {% endfor %}
   </div>
-  <h1>Pending</h1>
+  <div class="arrow-up-down">
+    <h1 id="pending" class="me-3">Pending</h1>
+    <a href="#finished"><i class="bi bi-arrow-up-square"></i></a>
+  </div>
   <div class="row">
     {% for p in place %}
       {% if not p.active %}
@@ -163,14 +192,20 @@
                 {% csrf_token %}
                 <input type="hidden" class="form-control" id="exampleFormControlInput1" name="user" value="{{user.id}}" readonly>
                 <input type="hidden" class="form-control" id="exampleFormControlInput1" name="place_d" value="{{p.id}}" readonly>
-                <button type="button" class="btn btn-danger text-uppercase">Delete</button>                 
-              </form>            
+                <div class="writer-form-btn-delete">       
+                  <a href="{% url 'place_edit' p.id %}">
+                    <button type="button" class="btn btn-warning me-2">Edit</button>
+                  </a>
+                  <button type="submit" class="btn btn-danger text-uppercase">Delete</button>                
+                </div>
+              </form>                
             </div>            
             <div style="height: 175px; overflow:hidden;" class="home-card-image-box">
               <img src="{{p.imageUrl}}" class="card-img-top" alt="{{p.title}}">
             </div>    
             <div class="card-footer text-muted">
-              {{p.updated}}
+              <span>{{p.created.day}}/{{p.created.month}}/{{p.created.year}}</span>            
+              <span>{{p.get_date}}</span>
             </div>
           </div>
         </div>

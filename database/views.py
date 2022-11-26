@@ -113,3 +113,33 @@ def place_details(request, pk):
     }
     
     return render(request, 'place_details.html', vars)
+
+
+@login_required(login_url='user_login')
+def place_edit(request,pk):
+    place = Place.objects.get(id=pk)
+    
+    if request.method == 'POST':
+        user = request.POST.get('user')
+        place_id = request.POST.get('place_id')
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        imageUrl = request.POST.get('imageUrl')
+        
+        if User.objects.filter(id=user).exists():
+            place_editable = Place.objects.get(id=place_id)
+            place_editable.title = title
+            place_editable.description = description
+            place_editable.imageUrl = imageUrl
+            place_editable.active = False
+            place_editable.save()
+            
+            return redirect('place_edit', pk=pk)
+        else:
+            return redirect('place_edit', pk=pk)
+    
+    vars = {
+        'place': place,
+    }
+    
+    return render(request, 'place_edit.html', vars)

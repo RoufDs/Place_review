@@ -1,0 +1,116 @@
+{% extends 'layout.html' %}
+
+{% block style %}
+  <style>
+    .writer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .writer-edit {
+      font-size: 2rem;
+    }
+
+    .writer-edit:hover {
+      color: #A9A9A9;
+      transform: translateY(-3px);   
+      cursor: pointer;   
+    }
+
+    .writer-edit:active {
+      transform: translateY(-1px);
+    }
+
+    .writer-form-create {
+      display: none;
+      background-color: rgb(238, 233, 213);
+      position: absolute;
+      z-index: 2;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      padding: 2rem;
+      border-radius: 4px;
+    }
+    
+    img {
+      animation: Alpha 1s;
+    }
+
+    @keyframes Alpha {
+      0% {
+        opacity: 0;    
+        transform: scale(.9);    
+      }
+
+      100% {
+        opacity: 1;  
+        transform: scale(1);          
+      }
+    }
+
+    .writer-form-btn-create {
+      display: flex;
+      justify-content: flex-end;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="writer-header">    
+    <button type="button" class="btn btn-outline-dark" onclick="history.back()">Back</button>
+    <i id="toggle" class="bi bi-pencil-square writer-edit"></i>
+  </div>
+  <form method="post" id="myShow" class="writer-form-create">
+    {% csrf_token %}    
+    <input type="hidden" class="form-control" id="exampleFormControlInput1" name="user" value="{{user.id}}" readonly>
+    <input type="hidden" class="form-control" id="exampleFormControlInput1" name="place_id" value="{{place.id}}" readonly>
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Title</label>
+      <input type="text" class="form-control" id="exampleFormControlInput1" name="title" value="{{place.title}}" required>
+    </div>
+    <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+      <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="description" required>{{place.description}}</textarea>
+    </div>
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">ImageUrl</label>
+      <input type="url" class="form-control" id="exampleFormControlInput1" name="imageUrl" value="{{place.imageUrl}}" required>
+    </div>
+    <div class="writer-form-btn-create">
+      <button type="reset" class="btn btn-outline-danger text-uppercase me-2">Reset</button>
+      <button type="submit" class="btn btn-outline-warning text-uppercase">Edit</button>
+    </div>
+  </form>
+  <div class="row">
+    <div class="col-xs-8 col-md-8 col-lg-8 d-block mx-auto">      
+      <div class="place-details-image my-3">
+        <img src="{{place.imageUrl}}" class="img-fluid rounded" alt="...">
+      </div>
+    </div>
+    <div class="col-xs-8 col-md-8 col-lg-8 d-block mx-auto">
+      <div class="place-details-header">
+        <h3>{{place.title}}</h3>
+      </div>
+      <div class="place-details-description">
+        <p>{{place.description|linebreaks}}</p>
+      </div>
+    </div>    
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    const targetDiv = document.getElementById("myShow");
+    const btn = document.getElementById("toggle");
+    btn.onclick = function () {
+      if (targetDiv.style.display !== "none") {
+        targetDiv.style.display = "none";
+      } else {
+        targetDiv.style.display = "block";
+      }
+    };
+  </script>
+{% endblock %}
