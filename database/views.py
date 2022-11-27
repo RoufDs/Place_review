@@ -95,9 +95,18 @@ def place_details(request, pk):
         comment = request.POST.get('comment')
         # print(username, stars, comment)
         
-        if Rating.objects.filter(place=place, user=User.objects.get(id=username)).exists():
+        # username
+        place_id = request.POST.get('place_id')
+        
+        if (
+            Rating.objects.filter(place=place, user=User.objects.get(id=username)).exists()
+            and username and stars and comment is not None
+        ):
             messages.success(request, 'You have already comment !') 
             return redirect('place_details', pk=pk)
+        elif username and place_id is not None:
+            rating = Rating.objects.get(id=place_id)
+            rating.delete()
         else:
             Rating.objects.create(
                 place=place,
